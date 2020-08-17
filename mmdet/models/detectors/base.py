@@ -11,6 +11,10 @@ from mmcv.utils import print_log
 from mmdet.core import auto_fp16
 from mmdet.utils import get_root_logger
 
+from torch.utils.tensorboard import SummaryWriter
+
+
+
 
 class BaseDetector(nn.Module, metaclass=ABCMeta):
     """Base class for detectors."""
@@ -251,7 +255,9 @@ class BaseDetector(nn.Module, metaclass=ABCMeta):
 
         outputs = dict(
             loss=loss, log_vars=log_vars, num_samples=len(data['img_metas']))
-
+        
+        writer = SummaryWriter('/opt/ml/output/tensorboard/')
+        writer.add_scalar('training loss', loss.item(), log_vars)
         return outputs
 
     def show_result(self,
